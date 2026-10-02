@@ -1,35 +1,44 @@
 # Depix
 
-Depix is a tool for recovering passwords from pixelized screenshots.
+An image-processing tool that attempts to recover text from pixelated screenshots made with a linear box filter. It matches pixel blocks against a search image rendered in the same font/style.
 
-This implementation works on pixelized images that were created with a linear box filter.
+Full original guide: [README.upstream.md](README.upstream.md).
 
-In [this article](https://www.linkedin.com/pulse/recovering-passwords-from-pixelized-screenshots-sipke-mellema) I cover background information on pixelization and similar research.
+## Requirements
 
-## Example
+Python 3 and Pillow.
 
-`python depix.py -p images/testimages/testimage3_pixels.png -s images/searchimages/debruinseq_notepad_Windows10_closeAndSpaced.png -o output.png`
+## Getting started
 
-![image](docs/img/Recovering_prototype_latest.png)
+```sh
+python -m venv .venv
+# Activate .venv, then:
+python -m pip install -r requirements.txt
+python depix.py -p images/testimages/testimage3_pixels.png -s images/searchimages/debruinseq_notepad_Windows10_closeAndSpaced.png -o output.png
+```
 
-## Usage
+## Project structure
 
-* Cut out the pixelated blocks from the screenshot as a single rectangle.
-* Paste a [De Bruijn sequence](https://damip.net/article-de-bruijn-sequence) with expected characters in an editor with the same font settings (text size, font, color, hsl).
-* Make a screenshot of the sequence. If possible, use the same screenshot tool that was used to create the pixelized image.
-* Run `python depix.py -p [pixelated rectangle image] -s [search sequence image] -o output.png`
+| Path | Purpose |
+| --- | --- |
+| `depix.py` | Command-line entry point |
+| `depixlib` | Matching and reconstruction logic |
+| `images/testimages` | Example inputs |
+| `images/searchimages` | Search images |
+| `docs` | Explanation and example output |
 
-## Algorithm
+## Configuration and limitations
 
-The algorithm uses the fact that the linear box filter processes every block separately. For every block it pixelizes all blocks in the search image to check for direct matches.
+Crop pixelated blocks to one rectangle and supply a search image using the expected font and rendering. Recovery depends on matching assumptions and is not guaranteed for arbitrary redaction. Use the tool only on images you are authorized to analyze.
 
-For most pixelized images Depix manages to find single-match results. It assumes these are correct. The matches of surrounding multi-match blocks are then compared to be geometrically at the same distance as in the pixelized image. Matches are also treated as correct. This process is repeated a couple of times.
+## Development and validation
 
-After correct blocks have no more geometrical matches, it will output all correct blocks directly. For multi-match blocks, it outputs the average of all matches.
+The documented example completed during cloud onboarding and produced a decodable 205 × 15 PNG. This demonstrates the example workflow, not exact recovery for arbitrary images.
 
-## Misc
+## Related projects and attribution
 
-### Usage issues
+Original project and research: [beurtschipper/Depix](https://github.com/beurtschipper/Depix). The preserved upstream README contains the algorithm explanation and article link.
 
-* **Dependency Issues** See: https://github.com/beurtschipper/Depix/issues/12
-* 
+## License
+
+See [LICENSE](LICENSE).
